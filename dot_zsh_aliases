@@ -1,0 +1,84 @@
+# aliases
+alias cleanbuildir='find . -type d \( -name "bin" -o -name "obj" -o -name "node_modules" \) -print -exec rm -rf {} +'
+alias python=python3
+
+alias pcr="pre-commit run"
+alias pca="pre-commit run -a"
+
+alias acrlogin="az login && az acr login -n magister"
+alias azlogin="az login use-device-code"
+
+alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock docker.io/wagoodman/dive"
+alias trivyscan="docker run --rm -v ~/.trivy-db/db:/root/.cache/trivy/db -v /var/run/docker.sock:/var/run/docker.sock -v ./:/app aquasec/trivy fs /app"
+
+alias chm="chezmoi"
+alias rider="open -na "Rider.app" --args "$@""
+
+# alias renovate="~/projects/Magister.Renovate/scripts/run-renovate-docker"
+
+cgit() {
+  local default_branch merged_branches branch
+
+  # Resolve default branch from origin/HEAD (expects refs/remotes/origin/main or master)
+  default_branch=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null | awk -F/ '{print $NF}')
+
+  if [[ -z $default_branch || ( $default_branch != main && $default_branch != master ) ]]; then
+    echo "Could not find the default branch (main/master) via origin/HEAD"
+    git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || true
+    return 1
+  fi
+
+  echo "\$ git checkout $default_branch"
+  git checkout "$default_branch" || return $?
+
+  echo "\$ git fetch"
+  git fetch --prune || return $?
+
+  echo "\$ git pull"
+  git pull || return $?
+
+  # List local branches merged into the default branch (excluding current marker and spaces)
+  merged_branches=$(git branch --merged "$default_branch" | sed -E 's/^[[:space:]]*\*?[[:space:]]*//')
+
+  for branch in ${(f)merged_branches}; do
+    [[ -z $branch ]] && continue
+    [[ $branch == "$default_branch" ]] && continue
+    git branch -d "$branch"
+  done
+}
+
+function toguid() {
+  input="$1"
+
+  if [[ -z "$input" ]]; then
+    echo "Usage: $0 <guid>"
+    exit 1
+  fi
+
+  # Remove dashes for validation
+  nodash="${input//-/}"
+
+  # Validate length (32 hex chars)
+  if [[ ${#nodash} -ne 32 ]]; then
+    echo "Invalid GUID length"
+    exit 1
+  fi
+
+  # Validate hex characters
+  if [[ ! "$nodash" =~ '^[0-9a-fA-F]{32}$' ]]; then
+    echo "Invalid GUID format (non-hex characters)"
+    exit 1
+  fi
+
+  # Uppercase
+  upper="${nodash:u}"
+
+  # Add dashes if missing
+  if [[ "$input" != *-* ]]; then
+    formatted="${upper[1,8]}-${upper[9,12]}-${upper[13,16]}-${upper[17,20]}-${upper[21,32]}"
+  else
+    formatted="${input:u}"
+  fi
+
+  echo "$formatted"
+}
