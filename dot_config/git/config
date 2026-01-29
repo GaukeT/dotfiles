@@ -1,0 +1,8 @@
+[includeIf "gitdir:~/projects/"]
+    path = work
+
+[includeIf "gitdir:~/projects2/"]
+    path = dev
+
+[includeIf "gitdir:~/.local/share/chezmoi/"]
+    path = dev

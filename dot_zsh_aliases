@@ -2,7 +2,6 @@
 alias cleanbuildir='find . -type d \( -name "bin" -o -name "obj" -o -name "node_modules" \) -print -exec rm -rf {} +'
 alias python=python3
 
-alias pcr="pre-commit run"
 alias pca="pre-commit run -a"
 
 alias acrlogin="az login && az acr login -n magister"
@@ -14,8 +13,9 @@ alias trivyscan="docker run --rm -v ~/.trivy-db/db:/root/.cache/trivy/db -v /var
 alias chm="chezmoi"
 alias rider="open -na "Rider.app" --args "$@""
 
-# alias renovate="~/projects/Magister.Renovate/scripts/run-renovate-docker"
+alias rr="~/projects/Magister.Renovate/scripts/run-renovate-docker"
 
+# Git repository reset to main branch and up-to-date
 cgit() {
   local default_branch merged_branches branch
 
@@ -47,6 +47,7 @@ cgit() {
   done
 }
 
+# output GUID, which misses it's dashes and/or lowercase
 function toguid() {
   input="$1"
 
@@ -80,5 +81,6 @@ function toguid() {
     formatted="${input:u}"
   fi
 
+  echo "$formatted" | pbcopy
   echo "$formatted"
 }

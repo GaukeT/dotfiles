@@ -11,7 +11,7 @@ brew bundle cleanup --global
 
 update brewfile to current state
 ```zsh
-brew bundle dump --describe --force --global
+brew bundle dump --force --global
 chezmoi add ~/.homebrew/Brewfile
 ```
 

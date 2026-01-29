@@ -33,3 +33,6 @@ source $(brew --prefix)/etc/bash_completion.d/az
 if [ -f ~/.zsh_aliases ]; then
   . ~/.zsh_aliases
 fi
+
+# Created by `pipx` on 2026-03-02 15:18:13
+export PATH="$PATH:/Users/gauke.teijema/.local/bin"
